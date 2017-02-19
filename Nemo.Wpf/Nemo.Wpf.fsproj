@@ -68,6 +68,11 @@
     <Resource Include="nemo.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nemo.Infra\Nemo.Infra.csproj">
+      <Name>Nemo.Infra</Name>
+      <Project>{6b3b7000-72bf-4fd4-8288-50074062eec4}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <Reference Include="Accessibility" />
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
@@ -106,6 +111,9 @@
       <Project>{6bafbd18-1ba9-4a5d-9f7e-3629a0cd069f}</Project>
       <Private>True</Private>
     </ProjectReference>
+    <Reference Include="XPlot.Plotly">
+      <HintPath>..\packages\XPlot.Plotly\lib\net45\XPlot.Plotly.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 	     Other similar extension points exist, see Microsoft.Common.targets.

@@ -69,6 +69,8 @@ type ReportViewModel(view:ReportView, data) as this =
                 this.SelectedFilter <- f |> List.head
                 ())
             (fun () -> removeFiltersCanExecute)
+    let mutable chartSpecs = []
+    let charts = ObservableCollection<string>()
     let addChart =
         Command.sync
             (fun () ->
@@ -76,6 +78,15 @@ type ReportViewModel(view:ReportView, data) as this =
                 removeFilters.RaiseCanExecuteChanged()
                 addFilterCanExecute <- false
                 addFilter.RaiseCanExecuteChanged()
+                let chartConfig =
+                    match selectedChartType with
+                    | ChartType.CumValues ->
+                        Nemo.ChartConfig.BucketChart(BucketChartType.CumValues, None)
+                    | _ -> failwith ""
+                let chartSpec = { Path = (filters |> Seq.toList |> List.choose (function | Choice2Of2 p -> Some p | _ -> None)) ; Config = chartConfig }
+                chartSpecs <- chartSpecs @ [chartSpec]
+                charts.Add((ChartMaker.chart chartSpec data).GetHtml())
+                this.RaisePropertyChanged <@@ this.Charts @@>
                 ())
     member this.Filters
         with get() = filters
@@ -101,3 +112,4 @@ type ReportViewModel(view:ReportView, data) as this =
             selectedChartType <- v
             this.RaisePropertyChanged <@@ this.SelectedChartType @@>
     member __.AddChart = addChart
+    member __.Charts = charts
