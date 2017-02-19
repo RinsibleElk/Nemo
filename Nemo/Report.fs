@@ -63,6 +63,36 @@ q:before,q:after {
   content:'';
 }
 abbr,acronym { border:0;}
+
+.ui-widget-header { 
+    background: transparent; 
+    border: none; 
+    border-bottom: 1px solid #c0c0c0; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+    border-radius: 0px; 
+} 
+.ui-widget-content { 
+    background: transparent; 
+    border: none; 
+    -moz-border-radius: 0px; 
+    -webkit-border-radius: 0px; 
+    border-radius: 0px; 
+} 
+.ui-tabs-nav .ui-state-default { 
+    background: transparent; 
+    border: none; 
+} 
+.ui-tabs-nav .ui-state-active { 
+    background: transparent url(img/uiTabsArrow.png) no-repeat bottom center; 
+    border: none; 
+} 
+.ui-tabs-nav .ui-state-default a { 
+    color: #c0c0c0; 
+} 
+.ui-tabs-nav .ui-state-active a { 
+    color: #459e00; 
+}
   </style>
   <title>%s</title>
 <script type='text/javascript'>//<![CDATA[
