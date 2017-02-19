@@ -11,7 +11,7 @@
     <AssemblyName>NemoWPF</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <Name>NemoWPF</Name>
-    <TargetFSharpCoreVersion>4.3.1.0</TargetFSharpCoreVersion>
+    <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -49,8 +49,15 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
+    <Compile Include="ViewFinderBehavior.fs" />
+    <Compile Include="PageViewModel.fs" />
+    <Resource Include="PageView.xaml" />
+    <Compile Include="ReportViewModel.fs" />
+    <Resource Include="ReportView.xaml" />
+    <Compile Include="StartViewModel.fs" />
+    <Resource Include="StartView.xaml" />
     <Compile Include="MainViewModel.fs" />
-    <Resource Include="MainWindow.xaml">
+    <Resource Include="MainView.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
@@ -73,6 +80,9 @@
       <HintPath>..\packages\FSharp.ViewModule.Core\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FSharp.ViewModule.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
     <Reference Include="PresentationUI" />
@@ -89,6 +99,11 @@
     <Reference Include="UIAutomationProvider" />
     <Reference Include="UIAutomationTypes" />
     <Reference Include="WindowsBase" />
+    <ProjectReference Include="..\Nemo\Nemo.fsproj">
+      <Name>Nemo</Name>
+      <Project>{6bafbd18-1ba9-4a5d-9f7e-3629a0cd069f}</Project>
+      <Private>True</Private>
+    </ProjectReference>
   </ItemGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
 	     Other similar extension points exist, see Microsoft.Common.targets.

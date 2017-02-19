@@ -2,6 +2,7 @@
 
 open System
 open System.Windows
+open ViewModels
 
 let loadXaml<'t> (filename:string) =
     (Uri(filename, UriKind.Relative) |> Application.LoadComponent) :?> 't
@@ -9,4 +10,7 @@ let loadXaml<'t> (filename:string) =
 [<STAThread>]
 [<EntryPoint>]
 let main argv =
-    ("App.xaml" |> loadXaml<Application>).Run()
+    let app = "App.xaml" |> loadXaml<Application>
+    let mainView = "MainView.xaml" |> loadXaml<Window>
+    mainView.DataContext <- MainViewModel()
+    app.Run(mainView)

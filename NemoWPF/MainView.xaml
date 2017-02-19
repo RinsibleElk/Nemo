@@ -1,15 +1,19 @@
-<Application
+<Window
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
         xmlns:local="clr-namespace:ViewModels;assembly=NemoWpf"
-        xmlns:behaviors="clr-namespace:Behaviors;assembly=NemoWpf">
-    <Application.Resources>
-        <ResourceDictionary
-              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-        </ResourceDictionary>
-    </Application.Resources>
-</Application>
+        xmlns:behaviors="clr-namespace:Behaviors;assembly=NemoWpf"
+        Icon="nemo.ico"
+        Title="NemoWPF" Height="750" Width="1200">
+    <Window.DataContext>
+        <local:MainViewModel />
+    </Window.DataContext>
+    <ContentControl x:Name="Content">
+        <i:Interaction.Behaviors>
+            <behaviors:ViewFinderBehavior />
+        </i:Interaction.Behaviors>
+    </ContentControl>
+</Window>

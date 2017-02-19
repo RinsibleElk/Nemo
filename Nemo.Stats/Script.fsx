@@ -3,6 +3,7 @@
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\Nemo.Stats.dll"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\MathNet.Numerics.dll"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\MathNet.Numerics.FSharp.dll"
+#r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\Newtonsoft.Json.dll"
 
 open System
 open System.IO
@@ -12,6 +13,7 @@ open Nemo
 open Nemo.Stats
 open MathNet.Numerics
 open MathNet.Numerics.Distributions
+open Newtonsoft.Json
 
 let normal mean stdev = Normal.Sample(mean, stdev)
 
@@ -108,5 +110,12 @@ let spec =
                                                                 ("Metric2 Cumulative", (timedf "Metric2" CumulativeTimedLine))
                                                             ]))
         ]
-Report.saveToFile "Report" (DirectoryInfo @"D:\Nemo\Test") "report.html" ({ Layout = spec }) (allData)
+//Report.saveToFile "Report" (DirectoryInfo @"D:\Nemo\Test") "report.html" ({ Layout = spec }) (allData)
 
+let write (file:FileInfo) (data:Data) =
+    let serializer = JsonSerializer()
+    serializer.Formatting <- Formatting.Indented
+    use stream = new FileStream(file.FullName, FileMode.Create, FileAccess.Write)
+    use writer = new StreamWriter(stream)
+    serializer.Serialize(writer, data, typeof<Data>)
+write (FileInfo @"D:\Nemo\Test\data.json") allData
