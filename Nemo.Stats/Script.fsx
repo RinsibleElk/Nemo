@@ -70,16 +70,42 @@ let allData =
 let bucket ty = {Path=[];Config=BucketChart(ty,None)}
 let bucket2 nq ty = {Path=[];Config=BucketChart(ty,(Some {NumQuantiles = (Some nq)}))}
 let timed s ty = {Path=[All;Specific s];Config=TimedChart(ty,None)}
+let bucketf ty = {Path=[Specific "Buckets"];Config=BucketChart(ty,None)}
+let bucket2f nq ty = {Path=[Specific "Buckets"];Config=BucketChart(ty,(Some {NumQuantiles = (Some nq)}))}
+let timedf s ty = {Path=[Specific "Daily";All;Specific s];Config=TimedChart(ty,None)}
 let spec =
     Manual
         [
             ("Separate",    [Specific "Buckets"],   FromData ([All], (Page [("Cdf", bucket Cdf);("Pdf", bucket Pdf)])))
-            ("Together",    [Specific "Buckets"],   (Page [("Cdf", bucket Cdf);("Pdf", bucket Pdf);("CumValues", bucket CumValues);("PredResp", bucket PredResp);("Cdf", bucket2 Ten Cdf);("Pdf", bucket2 Ten Pdf);("CumValues", bucket2 Ten CumValues);("PredResp", bucket2 Ten PredResp)]))
+            ("Together",    [Specific "Buckets"],   (Page   [
+                                                                ("Cdf", bucket Cdf)
+                                                                ("Pdf", bucket Pdf)
+                                                                ("CumValues", bucket CumValues)
+                                                                ("PredResp", bucket PredResp)
+                                                                ("Cdf", bucket2 Ten Cdf)
+                                                                ("Pdf", bucket2 Ten Pdf)
+                                                                ("CumValues", bucket2 Ten CumValues)
+                                                                ("PredResp", bucket2 Ten PredResp)
+                                                            ]))
             ("Daily",       [Specific "Daily"],     (Page   [
                                                                 ("Metric1", (timed "Metric1" TimedLine))
                                                                 ("Metric1 Cumulative", (timed "Metric1" CumulativeTimedLine))
                                                                 ("Metric2", (timed "Metric2" TimedLine))
                                                                 ("Metric2 Cumulative", (timed "Metric2" CumulativeTimedLine))
+                                                            ]))
+            ("OnePage",     [],                     (Page   [
+                                                                ("Cdf", bucketf Cdf)
+                                                                ("Pdf", bucketf Pdf)
+                                                                ("CumValues", bucketf CumValues)
+                                                                ("PredResp", bucketf PredResp)
+                                                                ("Cdf", bucket2f Ten Cdf)
+                                                                ("Pdf", bucket2f Ten Pdf)
+                                                                ("CumValues", bucket2f Ten CumValues)
+                                                                ("PredResp", bucket2f Ten PredResp)
+                                                                ("Metric1", (timedf "Metric1" TimedLine))
+                                                                ("Metric1 Cumulative", (timedf "Metric1" CumulativeTimedLine))
+                                                                ("Metric2", (timedf "Metric2" TimedLine))
+                                                                ("Metric2 Cumulative", (timedf "Metric2" CumulativeTimedLine))
                                                             ]))
         ]
 Report.saveToFile "Report" (DirectoryInfo @"D:\Nemo\Test") "report.html" ({ Layout = spec }) (allData)
