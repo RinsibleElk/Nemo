@@ -7,11 +7,53 @@ open FSharp.Data
 
 type BucketChartType =
     | CumValues
+    | PredResp
     | Cdf
     | Pdf
 
+/// By restricting this using types, we get to have a slightly easier time of things.
+type NumQuantiles =
+    | Four
+    | Five
+    | Ten
+    | OneHundred
+
+[<RequireQualifiedAccess>]
+module internal BucketChartPreparation =
+    let private collapseFromExactMult numQuantiles (buckets:Bucket[]) =
+        let factor = 1000 / numQuantiles
+        let halfFactor = (factor / 2) - 1
+        [| 0 .. (numQuantiles - 1) |]
+        |> Array.map
+            (fun i ->
+                let median = buckets.[i * factor + halfFactor].Max
+                let max = buckets.[(i + 1) * factor - 1].Max
+                let min = buckets.[i * factor].Min
+                let (sum, sumSquares, weight, y) =
+                    [(i * factor) .. ((i + 1) * factor - 1)]
+                    |> List.fold
+                        (fun (s, ss, w, y) j ->
+                            let bucket = buckets.[j]
+                            (s + bucket.Sum, ss + bucket.SumSquares, w + bucket.Weight, y + bucket.Response))
+                        (0.0,0.0,0.0,0.0)
+                {
+                    Weight = weight
+                    Response = y  
+                    Sum = sum
+                    SumSquares = sumSquares
+                    Median = median
+                    Max = max
+                    Min = min
+                })
+    let collapse numQuantiles (buckets:Bucket[]) =
+        match numQuantiles with
+        | Four -> collapseFromExactMult 4 buckets
+        | Five -> collapseFromExactMult 5 buckets
+        | Ten -> collapseFromExactMult 10 buckets
+        | OneHundred -> collapseFromExactMult 100 buckets
+
 type BucketChartOptions = {
-    Foo : string }
+    NumQuantiles : NumQuantiles option }
 
 type SimpleChartType =
     | Line
@@ -42,26 +84,39 @@ module ChartMaker =
     let private makeSeries chartSpec name data : Trace option =
         match chartSpec with
         | BucketChart (ty,b) ->
+            let numQuantiles = b |> Option.map (fun x -> x.NumQuantiles) |> defaultArg <| None
+            let n = match numQuantiles with | None -> 1000 | Some x -> match x with | Four -> 4 | Five -> 5 | Ten -> 10 | OneHundred -> 100
+            let mapBuckets = numQuantiles |> Option.map BucketChartPreparation.collapse |> defaultArg <| id
             match data with
             | Buckets container ->
                 match ty with
                 | CumValues ->
                     // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                     container.Buckets
+                    |> mapBuckets
                     |> List.ofArray
                     |> List.rev
                     |> List.scan
-                        (fun (x,y) bucket -> (x + bucket.Weight, y + bucket.Weight * bucket.Response))
+                        (fun (x,y) bucket -> (x + bucket.Weight, y + bucket.Response))
                         (0.0, 0.0)
+                    |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                | PredResp ->
+                    container.Buckets
+                    |> mapBuckets
+                    |> List.ofArray
+                    |> List.map (fun bucket -> (bucket.Sum / bucket.Weight, bucket.Response / bucket.Weight))
                     |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
                 | Cdf ->
                     // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                     let minValue = (container.Buckets.[0].Min, 0.0)
                     let maxValue = (container.Buckets.[999].Max, 1.0)
+                    let fn = float n
+                    let m = 1.0 / (2.0 * fn)
                     container.Buckets
+                    |> mapBuckets
                     |> Array.mapi
                         (fun i bucket ->
-                            (bucket.Median, (((float i) / 1000.0) + 0.0005)))
+                            (bucket.Median, (((float i) / fn) + m)))
                     |> List.ofArray
                     |> fun l -> (minValue::l)@[maxValue]
                     |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
@@ -69,10 +124,13 @@ module ChartMaker =
                     // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                     let minValue = (container.Buckets.[0].Min, 0.0)
                     let maxValue = (container.Buckets.[999].Max, 1.0)
+                    let fn = float n
+                    let m = 1.0 / (2.0 * fn)
                     container.Buckets
+                    |> mapBuckets
                     |> Array.mapi
                         (fun i bucket ->
-                            (bucket.Median, (((float i) / 1000.0) + 0.0005)))
+                            (bucket.Median, (((float i) / fn) + m)))
                     |> List.ofArray
                     |> fun l -> l@[maxValue]
                     |> List.scan

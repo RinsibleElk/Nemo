@@ -15,14 +15,15 @@ open MathNet.Numerics.Distributions
 
 let normal mean stdev = Normal.Sample(mean, stdev)
 
-let data mean stdev =
+let data mean stdev alpha beta =
     List.init
         100000
         (fun _ ->
             let x = normal mean stdev
             let weight = max 1.0 (Math.Round(10.0 * Math.Exp(normal 0.5 1.1)))
-            (x, weight))
-    |> Quantiles.quantiles
+            let y = alpha + x * beta + (normal 0.0 stdev)
+            (x, weight, y))
+    |> Quantiles.predResp
     |> Buckets
 let dailyData mean stdev =
     let rec loop (date:DateTime) =
@@ -40,8 +41,9 @@ let dailyData mean stdev =
 let allData =
     let buckets =
         [
-            ("Foo", data -0.0001 0.0005)
-            ("Bar", data 0.0001 0.0010)
+            ("Foo", data -0.0001 0.0005 0.0 1.0)
+            ("Bar", data 0.0001 0.0010 0.0002 0.9)
+            ("Baz", data 0.0001 0.0010 -0.0002 1.1)
         ]
         |> Map.ofList
         |> Grouped
@@ -66,12 +68,13 @@ let allData =
     |> Map.ofList
     |> Grouped
 let bucket ty = {Path=[];Config=BucketChart(ty,None)}
+let bucket2 nq ty = {Path=[];Config=BucketChart(ty,(Some {NumQuantiles = (Some nq)}))}
 let timed s ty = {Path=[All;Specific s];Config=TimedChart(ty,None)}
 let spec =
     Manual
         [
             ("Separate",    [Specific "Buckets"],   FromData ([All], (Page [("Cdf", bucket Cdf);("Pdf", bucket Pdf)])))
-            ("Together",    [Specific "Buckets"],   (Page [("Cdf", bucket Cdf);("Pdf", bucket Pdf)]))
+            ("Together",    [Specific "Buckets"],   (Page [("Cdf", bucket Cdf);("Pdf", bucket Pdf);("CumValues", bucket CumValues);("PredResp", bucket PredResp);("Cdf", bucket2 Ten Cdf);("Pdf", bucket2 Ten Pdf);("CumValues", bucket2 Ten CumValues);("PredResp", bucket2 Ten PredResp)]))
             ("Daily",       [Specific "Daily"],     (Page   [
                                                                 ("Metric1", (timed "Metric1" TimedLine))
                                                                 ("Metric1 Cumulative", (timed "Metric1" CumulativeTimedLine))
