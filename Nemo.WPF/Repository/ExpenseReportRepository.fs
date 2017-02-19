@@ -1,6 +1,6 @@
-﻿namespace FSharpWpfMvvmTemplate.Repository
+﻿namespace Nemo.WPF.Repository
 
-open FSharpWpfMvvmTemplate.Model
+open Nemo.WPF.Model
 
 type ExpenseReportRepository() =
     member x.GetAll() =

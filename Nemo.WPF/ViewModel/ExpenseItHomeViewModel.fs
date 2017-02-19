@@ -1,4 +1,4 @@
-﻿namespace FSharpWpfMvvmTemplate.ViewModel
+﻿namespace Nemo.WPF.ViewModel
 
 open System
 open System.Xml
@@ -7,8 +7,8 @@ open System.Windows.Data
 open System.Windows.Input
 open System.ComponentModel
 open System.Collections.ObjectModel
-open FSharpWpfMvvmTemplate.Model
-open FSharpWpfMvvmTemplate.Repository
+open Nemo.WPF.Model
+open Nemo.WPF.Repository
 open System.Reflection
 
 type ApprovalStatus =

@@ -1,4 +1,4 @@
-﻿namespace FSharpWpfMvvmTemplate.Model
+﻿namespace Nemo.WPF.Model
 
 type Expense =
     { ExpenseType : string

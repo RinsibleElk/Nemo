@@ -1,17 +1,18 @@
-﻿module MainApp
+﻿namespace Nemo.WPF
 
 open System
 open System.Windows
 open System.Windows.Controls
 open System.Windows.Markup
-open FSharpWpfMvvmTemplate.ViewModel
+open Nemo.WPF.ViewModel
 
-// Create the View and bind it to the View Model
-let mainWindowViewModel = Application.LoadComponent(
-                             new System.Uri("/App;component/mainwindow.xaml", UriKind.Relative)) :?> Window
-mainWindowViewModel.DataContext <- new MainWindowViewModel() 
+module MainApp =
+    // Create the View and bind it to the View Model
+    let mainWindowViewModel = Application.LoadComponent(
+                                 new System.Uri("/App;component/mainwindow.xaml", UriKind.Relative)) :?> Window
+    mainWindowViewModel.DataContext <- new MainWindowViewModel() 
 
-// Application Entry point
-[<STAThread>]
-[<EntryPoint>]
-let main(_) = (new Application()).Run(mainWindowViewModel)
+    // Application Entry point
+    [<STAThread>]
+    [<EntryPoint>]
+    let main(_) = (new Application()).Run(mainWindowViewModel)

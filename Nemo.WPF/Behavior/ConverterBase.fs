@@ -1,16 +1,17 @@
-﻿module ConverterBase
+﻿namespace Nemo.WPF.Behavior
 
 open System;
 open System.Windows
 open System.Windows.Data
 
-let nullFunction = fun value target param culture -> value
+module internal ConverterBaseUtils =
+    let nullFunction = fun value target param culture -> value
 
 /// abstract class for converter
 [<AbstractClass>]
 type ConverterBase(convertFunction, convertBackFunction) =    
     /// constructor take nullFunction as inputs
-    new() = ConverterBase(nullFunction, nullFunction)
+    new() = ConverterBase(ConverterBaseUtils.nullFunction, ConverterBaseUtils.nullFunction)
 
     // implement the IValueConverter
     interface IValueConverter with

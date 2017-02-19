@@ -1,4 +1,4 @@
-﻿namespace FSharpWpfMvvmTemplate.ViewModel
+﻿namespace Nemo.WPF.ViewModel
 
 open System
 open System.Collections.ObjectModel
