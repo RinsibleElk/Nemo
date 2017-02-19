@@ -1,0 +1,25 @@
+﻿<UserControl
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Height="450" Width="500">
+    <StackPanel Orientation="Vertical">
+        <StackPanel Orientation="Horizontal">
+            <TextBlock Margin="10,0,10,0">Filter:</TextBlock>
+            <ComboBox Margin="10,0,10,0" Width="100" IsEditable="False" ItemsSource="{Binding Filters}" SelectedItem="{Binding SelectedFilter, Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding Converter={StaticResource DataNodeToString}}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <Button Margin="10,0,10,0" Command="{Binding AddFilter}">Add Filter</Button>
+            <TextBlock Margin="10,0,10,0" Text="{Binding CurrentFilters}" />
+            <Button Margin="10,0,10,0" Command="{Binding RemoveFilters}">Remove Filters</Button>
+        </StackPanel>
+        <StackPanel Orientation="Horizontal">
+            <ComboBox Margin="10,0,10,0" IsEditable="False" ItemsSource="{Binding Source={StaticResource ChartTypeValues}}" SelectedItem="{Binding SelectedChartType}" />
+            <Button Margin="10,0,10,0" Command="{Binding AddChart}">Add Chart</Button>
+        </StackPanel>
+        <ContentControl x:Name="Page" />
+    </StackPanel>
+</UserControl>

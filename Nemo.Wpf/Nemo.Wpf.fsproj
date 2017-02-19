@@ -7,10 +7,10 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{30597be9-08f8-4832-8ab7-009c00a6a2f2}</ProjectGuid>
     <OutputType>WinExe</OutputType>
-    <RootNamespace>NemoWPF</RootNamespace>
-    <AssemblyName>NemoWPF</AssemblyName>
+    <RootNamespace>Nemo.Wpf</RootNamespace>
+    <AssemblyName>Nemo.Wpf</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <Name>NemoWPF</Name>
+    <Name>App</Name>
     <TargetFSharpCoreVersion>4.4.0.0</TargetFSharpCoreVersion>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>
     <TargetFrameworkProfile />
@@ -23,7 +23,7 @@
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Debug\App.XML</DocumentationFile>
+    <DocumentationFile>bin\Debug\Nemo.Wpf.XML</DocumentationFile>
     <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -33,7 +33,7 @@
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DocumentationFile>bin\Release\App.XML</DocumentationFile>
+    <DocumentationFile>bin\Release\Nemo.Wpf.XML</DocumentationFile>
   </PropertyGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '11.0'">
@@ -49,9 +49,8 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
-    <Compile Include="ViewFinderBehavior.fs" />
-    <Compile Include="PageViewModel.fs" />
-    <Resource Include="PageView.xaml" />
+    <Compile Include="ChartType.fs" />
+    <Compile Include="DataNodeToStringConverter.fs" />
     <Compile Include="ReportViewModel.fs" />
     <Resource Include="ReportView.xaml" />
     <Compile Include="StartViewModel.fs" />
@@ -61,10 +60,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
-    <Resource Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Resource>
+    <Resource Include="App.xaml" />
     <Compile Include="App.fs" />
     <Content Include="App.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
@@ -78,6 +74,12 @@
     </Reference>
     <Reference Include="FSharp.ViewModule">
       <HintPath>..\packages\FSharp.ViewModule.Core\lib\portable-net45+netcore45+wpa81+wp8+MonoAndroid1+MonoTouch1\FSharp.ViewModule.dll</HintPath>
+    </Reference>
+    <Reference Include="FsXaml.Wpf">
+      <HintPath>..\packages\FsXaml.Wpf\lib\net45\FsXaml.Wpf.dll</HintPath>
+    </Reference>
+    <Reference Include="FsXaml.Wpf.TypeProvider">
+      <HintPath>..\packages\FsXaml.Wpf\lib\net45\FsXaml.Wpf.TypeProvider.dll</HintPath>
     </Reference>
     <Reference Include="mscorlib" />
     <Reference Include="Newtonsoft.Json">
