@@ -57,9 +57,9 @@
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Data.fs" />
-    <Compile Include="ReportSpec.fs" />
-    <None Include="Script.fsx" />
-    <None Include="Script1.fsx" />
+    <Compile Include="DataPath.fs" />
+    <Compile Include="ChartMaker.fs" />
+    <Compile Include="Report.fs" />
   </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">11</MinimumVisualStudioVersion>

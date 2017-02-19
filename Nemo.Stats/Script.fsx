@@ -79,5 +79,5 @@ let spec =
                                                                 ("Metric2 Cumulative", (timed "Metric2" CumulativeTimedLine))
                                                             ]))
         ]
-ChartMaker.saveToFile "Report" (DirectoryInfo @"D:\Nemo\Test") "report.html" ({ Layout = spec }) (allData)
+Report.saveToFile "Report" (DirectoryInfo @"D:\Nemo\Test") "report.html" ({ Layout = spec }) (allData)
 
