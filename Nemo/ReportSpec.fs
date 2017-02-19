@@ -20,11 +20,12 @@ type SimpleChartType =
 type SimpleChartOptions = {
     Bar : string }
 
-type ChartSpec =
-    | BucketChart of BucketChartType * BucketChartOptions option
-    | SimpleChart of SimpleChartType * SimpleChartOptions option
+type TimedChartType =
+    | TimedLine
+    | CumulativeTimedLine
 
-type GridLayout = (string * ChartSpec) list
+type TimedChartOptions = {
+    Baz : string }
 
 type DataNode =
     | Specific of string
@@ -32,10 +33,21 @@ type DataNode =
 
 type DataPath = DataNode list
 
+type ChartConfig =
+    | BucketChart of BucketChartType * BucketChartOptions option
+    | SimpleChart of SimpleChartType * SimpleChartOptions option
+    | TimedChart of TimedChartType * TimedChartOptions option
+
+type ChartSpec = {
+    Path : DataPath
+    Config : ChartConfig }
+
+type GridLayout = (string * ChartSpec) list
+
 type PageLayout =
     | Page of GridLayout
     | FromData of DataPath * PageLayout
-    | Manual of Map<string, DataPath * PageLayout>
+    | Manual of (string * DataPath * PageLayout) list
 
 type ReportSpec = {
     Layout : PageLayout }
@@ -104,7 +116,7 @@ module TraverseData =
 [<RequireQualifiedAccess>]
 module ChartMaker =
     /// Make a trace from some data.
-    let makeSeries chartSpec name data : Trace option =
+    let private makeSeries chartSpec name data : Trace option =
         match chartSpec with
         | BucketChart (ty,b) ->
             match data with
@@ -153,7 +165,6 @@ module ChartMaker =
             | Line ->
                 match data with
                 | SimpleData(data) ->
-                    // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                     Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
                 | _ -> None
             | CumulativeLine ->
@@ -166,19 +177,36 @@ module ChartMaker =
                         (0.0, 0.0)
                     |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
                 | _ -> None
+        | TimedChart (ty,b) ->
+            match ty with
+            | TimedLine ->
+                match data with
+                | TimedData(data) ->
+                    Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                | _ -> None
+            | CumulativeTimedLine ->
+                match data with
+                | TimedData(data) ->
+                    data
+                    |> List.scan
+                        (fun (_,ty) (x,y) -> (x, ty + y))
+                        (DateTime.MinValue, 0.0)
+                    |> List.skip 1
+                    |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                | _ -> None
 
     /// Make a chart from data.
     let chart chartSpec data =
-        let data = TraverseData.collapseDivergences data
+        let data = data |> TraverseData.filterData chartSpec.Path |> TraverseData.collapseDivergences
         match data with
         | Grouped m ->
             m
-            |> Map.map (fun key -> makeSeries chartSpec key)
+            |> Map.map (fun key -> makeSeries chartSpec.Config key)
             |> Map.filter (fun _ -> Option.isSome)
             |> Map.map (fun _ -> Option.get)
         | Invalid -> Map.empty
         | _ ->
-            match (makeSeries chartSpec "Data" data) with
+            match (makeSeries chartSpec.Config "Data" data) with
             | None -> Map.empty
             | Some trace -> Map.ofList [("Data", trace)]
         |> Map.toList
@@ -227,7 +255,6 @@ $(window).load(function(){
     let private makeHtmlTabs m =
         let containerGuid = Guid.NewGuid().ToString()
         m
-        |> Map.toList
         |> List.map
             (fun (tabText, html) ->
                 let contentGuid = Guid.NewGuid().ToString()
@@ -266,14 +293,14 @@ $(window).load(function(){
                     makeHtml pageLayout (TraverseData.filterData path data))
             |> fun m ->
                 let containerGuids = m |> Map.toList |> List.collect (snd >> fst)
-                let (newContainerGuid, html) = makeHtmlTabs (m |> Map.map (fun _ -> snd))
+                let (newContainerGuid, html) = makeHtmlTabs (m |> Map.map (fun _ -> snd) |> Map.toList)
                 (newContainerGuid::containerGuids, html)
         | Manual(m) ->
             m
-            |> Map.map (fun _ (path, pageLayout) -> makeHtml pageLayout (TraverseData.filterData path data))
+            |> List.map (fun (title, path, pageLayout) -> (title, (makeHtml pageLayout (TraverseData.filterData path data))))
             |> fun m ->
-                let containerGuids = m |> Map.toList |> List.collect (snd >> fst)
-                let (newContainerGuid, html) = makeHtmlTabs (m |> Map.map (fun _ -> snd))
+                let containerGuids = m |> List.collect (snd >> fst)
+                let (newContainerGuid, html) = makeHtmlTabs (m |> List.map (fun (a,(_,b)) -> (a,b)))
                 (newContainerGuid::containerGuids, html)
 
     /// Save a report to file from a report spec.
