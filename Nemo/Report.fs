@@ -26,11 +26,43 @@ module Report =
   <meta name=\"googlebot\" content=\"noindex, nofollow\">
   <script src=\"https://cdn.plot.ly/plotly-latest.min.js\"></script>
   <script type=\"text/javascript\" src=\"http://code.jquery.com/jquery-1.7.1.js\"></script>
-  <link rel=\"stylesheet\" type=\"text/css\" href=\"css/normalize.css\">
   <script type=\"text/javascript\" src=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.js\"></script>
-  <link rel=\"stylesheet\" type=\"text/css\" href=\"css/result-light.css\">
   <link rel=\"stylesheet\" type=\"text/css\" href=\"http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.9/themes/base/jquery-ui.css\">
   <style type=\"text/css\">
+*, body, button, input, textarea, select {
+  text-rendering: optimizeLegibility;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pre,form,fieldset,input,textarea,p,blockquote,th,td {
+  margin:0;
+  padding:0;
+}
+table {
+  border-collapse:collapse;
+  border-spacing:0;
+}
+fieldset,img {
+  border:0;
+}
+address,caption,cite,code,dfn,em,strong,th,var {
+  font-style:normal;
+  font-weight:normal;
+}
+ol,ul {
+  list-style:none;
+}
+caption,th {
+  text-align:left;
+}
+h1,h2,h3,h4,h5,h6 {
+  font-size:100%%;
+  font-weight:normal;
+}
+q:before,q:after {
+  content:'';
+}
+abbr,acronym { border:0;}
   </style>
   <title>%s</title>
 <script type='text/javascript'>//<![CDATA[
