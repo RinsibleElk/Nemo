@@ -7,6 +7,7 @@ NUGET
       R.NET.Community.FSharp (>= 1.6.4)
       RProvider (>= 1.1.13)
     DynamicInterop (0.7.4)
+    Expression.Blend.Sdk (1.0.2)
     FSharp.Charting (0.90.14)
     FSharp.Core (4.1)
       System.Collections (>= 4.0.11) - framework: >= netstandard16
@@ -35,6 +36,8 @@ NUGET
       System.ValueTuple (>= 4.3) - framework: >= net10, netstandard10, netstandard11, netstandard12, netstandard13, netstandard14, netstandard15
     FSharp.Data (2.3.2)
       Zlib.Portable (>= 1.11) - framework: >= netstandard11, portable-net45+sl5+win8, portable-net45+win8, portable-net45+win8+wp8+wpa81
+    FSharp.ViewModule.Core (1.0.6)
+      FSharp.Core
     FsLab (1.0.2)
       Deedle (1.2.5)
       Deedle.RPlugin (1.2.5)
@@ -52,7 +55,9 @@ NUGET
       XPlot.GoogleCharts (1.4.2)
       XPlot.GoogleCharts.Deedle (1.4.2)
       XPlot.Plotly (1.4.2)
+    FsXaml.Wpf (3.1.3)
     Google.DataTable.Net.Wrapper (3.1.2)
+    MahApps.Metro (1.4.3)
     MathNet.Numerics (3.13.1)
       TaskParallelLibrary (>= 1.0.2856) - framework: net35
     MathNet.Numerics.FSharp (3.13.1)

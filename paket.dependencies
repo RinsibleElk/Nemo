@@ -7,3 +7,8 @@ nuget FSharp.Data
 nuget MathNet.Numerics
 nuget MathNet.Numerics.FSharp
 nuget System.Windows.Interactivity
+nuget MahApps.Metro
+nuget Expression.Blend.Sdk
+nuget FSharp.ViewModule.Core
+nuget FsXaml.Wpf
+

@@ -10,9 +10,9 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		paket.dependencies = paket.dependencies
 	EndProjectSection
 EndProject
-Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Nemo.WPF", "Nemo.WPF\Nemo.WPF.fsproj", "{30597BE9-08F8-4832-8AB7-009C00A6A2F2}"
-EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Nemo.Stats", "Nemo.Stats\Nemo.Stats.fsproj", "{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}"
+EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "NemoWPF", "NemoWPF\NemoWPF.fsproj", "{30597BE9-08F8-4832-8AB7-009C00A6A2F2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,12 +30,6 @@ Global
 		{6BAFBD18-1BA9-4A5D-9F7E-3629A0CD069F}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6BAFBD18-1BA9-4A5D-9F7E-3629A0CD069F}.Release|x86.ActiveCfg = Release|Any CPU
 		{6BAFBD18-1BA9-4A5D-9F7E-3629A0CD069F}.Release|x86.Build.0 = Release|Any CPU
-		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|Any CPU.ActiveCfg = Debug|x86
-		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|x86.ActiveCfg = Debug|x86
-		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|x86.Build.0 = Debug|x86
-		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|Any CPU.ActiveCfg = Release|x86
-		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|x86.ActiveCfg = Release|x86
-		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|x86.Build.0 = Release|x86
 		{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}.Debug|x86.ActiveCfg = Debug|Any CPU
@@ -44,6 +38,14 @@ Global
 		{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}.Release|Any CPU.Build.0 = Release|Any CPU
 		{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}.Release|x86.ActiveCfg = Release|Any CPU
 		{5AAEE0D4-7912-49A6-B7AF-DC22CFFD7098}.Release|x86.Build.0 = Release|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Debug|x86.Build.0 = Debug|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|x86.ActiveCfg = Release|Any CPU
+		{30597BE9-08F8-4832-8AB7-009C00A6A2F2}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
