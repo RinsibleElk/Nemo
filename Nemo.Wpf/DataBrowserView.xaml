@@ -13,9 +13,9 @@
                 <TextBlock Text="{Binding Name}" />
             </HierarchicalDataTemplate>
             <DataTemplate DataType="{x:Type local:TimedDataDataBrowserModel}">
-                <Expander Header="{Binding Name}">
+                <Expander Header="{Binding Name}" ToolTip="Click to expand - warning: slow.">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <DataGrid ItemsSource="{Binding Children}" AutoGenerateColumns="False">
+                        <DataGrid IsReadOnly="True" ItemsSource="{Binding Children}" AutoGenerateColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="Time" Binding="{Binding Name}"/>
                                 <DataGridTextColumn Header="Value" Binding="{Binding Value}"/>
@@ -25,9 +25,9 @@
                 </Expander>
             </DataTemplate>
             <DataTemplate DataType="{x:Type local:SimpleDataDataBrowserModel}">
-                    <Expander Header="{Binding Name}">
+                <Expander Header="{Binding Name}" ToolTip="Click to expand - warning: slow.">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <DataGrid ItemsSource="{Binding Children}" AutoGenerateColumns="False">
+                        <DataGrid IsReadOnly="True" ItemsSource="{Binding Children}" AutoGenerateColumns="False">
                             <DataGrid.Columns>
                                 <DataGridTextColumn Header="X" Binding="{Binding Name}"/>
                                 <DataGridTextColumn Header="Y" Binding="{Binding Value}"/>
@@ -37,12 +37,18 @@
                 </Expander>
             </DataTemplate>
             <DataTemplate DataType="{x:Type local:BucketsDataBrowserModel}">
-                <Expander Header="{Binding Name}">
+                <Expander Header="{Binding Name}" ToolTip="Click to expand - warning: slow.">
                     <ScrollViewer VerticalScrollBarVisibility="Auto">
-                        <DataGrid ItemsSource="{Binding Children}" AutoGenerateColumns="False">
+                        <DataGrid IsReadOnly="True" ItemsSource="{Binding Children}" AutoGenerateColumns="False">
                             <DataGrid.Columns>
-                                <DataGridTextColumn Header="X" Binding="{Binding Name}"/>
-                                <DataGridTextColumn Header="Bucket" Binding="{Binding Value}"/>
+                                <DataGridTextColumn Header="Index" Binding="{Binding Name}"/>
+                                <DataGridTextColumn Header="Weight" Binding="{Binding Weight}"/>
+                                <DataGridTextColumn Header="Min" Binding="{Binding Min}"/>
+                                <DataGridTextColumn Header="Median" Binding="{Binding Median}"/>
+                                <DataGridTextColumn Header="Max" Binding="{Binding Max}"/>
+                                <DataGridTextColumn Header="Sum" Binding="{Binding Sum}"/>
+                                <DataGridTextColumn Header="SumSquares" Binding="{Binding SumSquares}"/>
+                                <DataGridTextColumn Header="Response" Binding="{Binding Response}"/>
                             </DataGrid.Columns>
                         </DataGrid>
                     </ScrollViewer>

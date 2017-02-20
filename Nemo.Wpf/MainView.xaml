@@ -2,7 +2,7 @@
                       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                       xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
                       Title="Nemo"
-                      Background="#FF373F44"
+                      Background="White"
                       Icon="nemo.ico">
     <Grid>
         <ContentControl x:Name="Content" />

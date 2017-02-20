@@ -10,51 +10,53 @@ open System.Collections.ObjectModel
 type DataBrowserModel() =
     abstract member Children : DataBrowserModel list with get
     abstract member Name : string with get
-    abstract member Value : string with get
-    abstract member Level : int with get
 
 [<Sealed>]
-type SimpleDataPointDataBrowserModel(level, name, value) =
+type SimpleDataPointDataBrowserModel(name, value:string) =
     inherit DataBrowserModel()
     override __.Children = []
     override __.Name = name
-    override __.Value = value
-    override __.Level = level
+    member __.Value = value
 
 [<Sealed>]
-type TimedDataDataBrowserModel(level, name, data:(DateTime * double) list) =
+type BucketDataPointDataBrowserModel(i, bucket) =
     inherit DataBrowserModel()
-    override __.Children = data |> List.map (fun (time, value) -> SimpleDataPointDataBrowserModel(level + 4, time.ToString("o"), value.ToString()) :> DataBrowserModel)
-    override __.Name = name
-    override __.Value = "TimedData"
-    override __.Level = level
+    override __.Children = []
+    override __.Name = sprintf "%d" i
+    member __.Weight = bucket.Weight
+    member __.Min = bucket.Min
+    member __.Median = bucket.Median
+    member __.Max = bucket.Max
+    member __.Sum = bucket.Sum
+    member __.SumSquares = bucket.SumSquares
+    member __.Response = bucket.Response
 
 [<Sealed>]
-type SimpleDataDataBrowserModel(level, name, data:(double * double) list) =
+type TimedDataDataBrowserModel(name, data:(DateTime * double) list) =
     inherit DataBrowserModel()
-    override __.Children = data |> List.map (fun (x, y) -> SimpleDataPointDataBrowserModel(level + 4, x.ToString(), y.ToString()) :> DataBrowserModel)
-    override __.Name = name
-    override __.Value = "SimpleData"
-    override __.Level = level
+    override __.Children = data |> List.map (fun (time, value) -> SimpleDataPointDataBrowserModel(time.ToString("o"), value.ToString()) :> DataBrowserModel)
+    override __.Name = sprintf "%s (Timed Data)" name
 
 [<Sealed>]
-type InvalidDataBrowserModel(level, name) =
+type SimpleDataDataBrowserModel(name, data:(double * double) list) =
+    inherit DataBrowserModel()
+    override __.Children = data |> List.map (fun (x, y) -> SimpleDataPointDataBrowserModel(x.ToString(), y.ToString()) :> DataBrowserModel)
+    override __.Name = sprintf "%s (XY Data)" name
+
+[<Sealed>]
+type InvalidDataBrowserModel(name) =
     inherit DataBrowserModel()
     override __.Children = []
     override __.Name = name
-    override __.Value = "Invalid"
-    override __.Level = level
 
 [<Sealed>]
-type BucketsDataBrowserModel(level, name, container) =
+type BucketsDataBrowserModel(name, container) =
     inherit DataBrowserModel()
-    override __.Children = container.Buckets |> List.ofArray |> List.map (fun bucket -> SimpleDataPointDataBrowserModel(level + 4, bucket.Median.ToString(), bucket.ToString()) :> DataBrowserModel)
-    override __.Name = name
-    override __.Value = "Buckets"
-    override __.Level = level
+    override __.Children = container.Buckets |> List.ofArray |> List.mapi (fun i bucket -> BucketDataPointDataBrowserModel(i, bucket) :> DataBrowserModel)
+    override __.Name = sprintf "%s (Buckets)" name
 
 [<Sealed>]
-type GroupedDataBrowserModel (level, name, m:Map<string, Data>) =
+type GroupedDataBrowserModel(name, m:Map<string, Data>) =
     inherit DataBrowserModel()
     override __.Children =
         m
@@ -62,14 +64,12 @@ type GroupedDataBrowserModel (level, name, m:Map<string, Data>) =
         |> List.map
             (fun (n, data) ->
                 match data with
-                | Grouped m2 -> GroupedDataBrowserModel(level + 4, n, m2) :> DataBrowserModel
-                | TimedData l -> TimedDataDataBrowserModel(level + 4, n, l) :> DataBrowserModel
-                | SimpleData l -> SimpleDataDataBrowserModel(level + 4, n, l) :> DataBrowserModel
-                | Buckets container -> BucketsDataBrowserModel(level + 4, n, container) :> DataBrowserModel
-                | Invalid -> InvalidDataBrowserModel(level + 4, n) :> DataBrowserModel)
+                | Grouped m2 -> GroupedDataBrowserModel(n, m2) :> DataBrowserModel
+                | TimedData l -> TimedDataDataBrowserModel(n, l) :> DataBrowserModel
+                | SimpleData l -> SimpleDataDataBrowserModel(n, l) :> DataBrowserModel
+                | Buckets container -> BucketsDataBrowserModel(n, container) :> DataBrowserModel
+                | Invalid -> InvalidDataBrowserModel(n) :> DataBrowserModel)
     override __.Name = name
-    override __.Value = "Grouped"
-    override __.Level = level
 
 [<RequireQualifiedAccess>]
 module DataBrowserModelUtils =
@@ -77,8 +77,8 @@ module DataBrowserModelUtils =
         let level = -4
         let n = "Root"
         match data with
-        | Grouped m2 -> GroupedDataBrowserModel(level + 4, n, m2) :> DataBrowserModel
-        | TimedData l -> TimedDataDataBrowserModel(level + 4, n, l) :> DataBrowserModel
-        | SimpleData l -> SimpleDataDataBrowserModel(level + 4, n, l) :> DataBrowserModel
-        | Buckets container -> BucketsDataBrowserModel(level + 4, n, container) :> DataBrowserModel
-        | Invalid -> InvalidDataBrowserModel(level + 4, n) :> DataBrowserModel
+        | Grouped m2 -> GroupedDataBrowserModel(n, m2) :> DataBrowserModel
+        | TimedData l -> TimedDataDataBrowserModel(n, l) :> DataBrowserModel
+        | SimpleData l -> SimpleDataDataBrowserModel(n, l) :> DataBrowserModel
+        | Buckets container -> BucketsDataBrowserModel(n, container) :> DataBrowserModel
+        | Invalid -> InvalidDataBrowserModel(n) :> DataBrowserModel
