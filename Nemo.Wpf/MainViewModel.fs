@@ -12,8 +12,9 @@ type MainViewModel() as this =
     let dataSet data =
         let reportViewModel = ReportViewModel(data)
         view.Content.Content <- reportViewModel.View
-    let startViewModel = StartViewModel(dataSet)
     do
-        view.Content.Content <- startViewModel.View
         view.DataContext <- this
     member __.View = view
+    member __.OnActivated() =
+        let startViewModel = StartViewModel(dataSet)
+        view.Content.Content <- startViewModel.View

@@ -99,7 +99,15 @@ type ReportViewModel(data) as this =
                 charts.Add fixedHtml
                 this.RaisePropertyChanged <@@ this.Charts @@>
                 ())
-    do view.DataContext <- this
+    let dataBrowserViewModel =
+        try
+            DataBrowserViewModel(data)
+        with e ->
+            printfn "Error was %A" e
+            failwith ""
+    do
+        view.DataContext <- this
+        view.DataBrowser.Content <- dataBrowserViewModel.View
     member this.Filters
         with get() = filters
         and set v =

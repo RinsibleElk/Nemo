@@ -11,6 +11,9 @@ type Bucket = {
     SumSquares : double
     /// May be NaN if there is no response associated.
     Response : double }
+    with
+        override this.ToString() =
+            sprintf "{ Weight=%f; Min=%f; Median=%f; Max=%f; Sum=%f; SumSquares=%f; Response=%f }" this.Weight this.Min this.Median this.Max this.Sum this.SumSquares this.Response
 
 type BucketContainer = {
     NanWeight : double

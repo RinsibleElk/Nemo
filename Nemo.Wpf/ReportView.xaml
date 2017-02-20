@@ -20,8 +20,9 @@
             <ComboBox Margin="10,0,10,0" IsEditable="False" ItemsSource="{Binding Source={StaticResource ChartTypeValues}}" SelectedItem="{Binding SelectedChartType}" />
             <Button Margin="10,0,10,0" Command="{Binding AddChart}">Add Chart</Button>
         </StackPanel>
+        <ContentControl DockPanel.Dock="Top" x:Name="DataBrowser" />
         <ScrollViewer VerticalScrollBarVisibility="Auto">
-            <ItemsControl x:Name="Hello" ItemsSource="{Binding Charts}">
+            <ItemsControl ItemsSource="{Binding Charts}">
                 <ItemsControl.ItemTemplate>
                     <DataTemplate>
                         <StackPanel Orientation="Vertical">

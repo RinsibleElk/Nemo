@@ -15,12 +15,15 @@ type App = XAML<"App.xaml">
 let main(_) =
     let mainViewModel = MainViewModel()
     let app = App()
+    let mutable activated = false
     app.Activated
     |> Event.add
         (fun _ ->
-            let appStyle = ThemeManager.DetectAppStyle(Application.Current)
-            ThemeManager.ChangeAppStyle(Application.Current,
-                                        ThemeManager.GetAccent("Blue"),
-                                        ThemeManager.GetAppTheme("BaseLight"));
-            ())
+            if (not activated) then
+                let appStyle = ThemeManager.DetectAppStyle(Application.Current)
+                ThemeManager.ChangeAppStyle(Application.Current,
+                                            ThemeManager.GetAccent("Blue"),
+                                            ThemeManager.GetAppTheme("BaseLight"));
+                mainViewModel.OnActivated()
+                activated <- true)
     app.Run(mainViewModel.View)
