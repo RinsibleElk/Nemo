@@ -1,8 +1,10 @@
-<Window
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Nemo" Icon="nemo.ico">
+<Controls:MetroWindow xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                      xmlns:Controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+                      Title="Nemo"
+                      Background="#FF373F44"
+                      Icon="nemo.ico">
     <Grid>
         <ContentControl x:Name="Content" />
     </Grid>
-</Window>
+</Controls:MetroWindow>
