@@ -97,7 +97,6 @@ type ReportViewModel(data) as this =
                 let headOffset = html.IndexOf("<head>")
                 let fixedHtml = html.Substring(0, headOffset) + "<head>" + compatibilityHeader + html.Substring(headOffset + 6)
                 charts.Add fixedHtml
-                File.WriteAllText(@"D:\Nemo\Test\chart17.html", fixedHtml)
                 this.RaisePropertyChanged <@@ this.Charts @@>
                 ())
     do view.DataContext <- this
