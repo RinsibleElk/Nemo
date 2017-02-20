@@ -45,7 +45,7 @@ type ReportViewModel(data) as this =
                     | Grouped m ->
                         currentFilters <- currentFilters @ [sf]
                         this.RaisePropertyChanged <@@ this.CurrentFilters @@>
-                        currentData <- if m |> Map.isEmpty then Invalid else m |> Map.toList |> List.head |> snd
+                        currentData <- if m |> Map.isEmpty then Invalid else (match sf with | All -> m |> Map.toList |> List.head |> snd | Specific s -> m |> Map.tryFind s |> defaultArg <| Invalid)
                         let f =
                             match currentData with
                             | Grouped m ->
@@ -88,9 +88,10 @@ type ReportViewModel(data) as this =
                 addFilter.RaiseCanExecuteChanged()
                 let chartConfig =
                     match selectedChartType with
-                    | ChartType.CumValues ->
-                        Nemo.ChartConfig.BucketChart(BucketChartType.CumValues, None)
-                    | _ -> failwith ""
+                    | ChartType.CumValues -> ChartConfig.BucketChart(BucketChartType.CumValues, None)
+                    | ChartType.Line -> ChartConfig.SimpleChart(SimpleChartType.Line, None)
+                    | ChartType.TimedLine -> ChartConfig.TimedChart(TimedChartType.TimedLine, None)
+                    | _ -> failwithf "Unknown chart type %A" selectedChartType
                 let chartSpec = { Path = [] ; Config = chartConfig }
                 chartSpecs <- chartSpecs @ [chartSpec]
                 let html = (ChartMaker.chart chartSpec currentData).GetHtml()
