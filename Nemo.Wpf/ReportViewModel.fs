@@ -10,11 +10,19 @@ open Nemo
 open FsXaml
 open System
 open System.Collections.ObjectModel
+open FSharp.Data
 
 type ReportView = XAML<"ReportView.xaml">
 
-type ReportViewModel(view:ReportView, data) as this =
+type ReportViewModel(data) as this =
     inherit ViewModelBase()
+    let view = ReportView()
+    let compatibilityHeader = "
+        <style type=\"text/css\">
+            html{overflow:hidden;}
+        </style>
+        <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />
+"
     let mutable currentData = data
     let f =
         match currentData with
@@ -83,11 +91,16 @@ type ReportViewModel(view:ReportView, data) as this =
                     | ChartType.CumValues ->
                         Nemo.ChartConfig.BucketChart(BucketChartType.CumValues, None)
                     | _ -> failwith ""
-                let chartSpec = { Path = (filters |> Seq.toList |> List.choose (function | Choice2Of2 p -> Some p | _ -> None)) ; Config = chartConfig }
+                let chartSpec = { Path = [] ; Config = chartConfig }
                 chartSpecs <- chartSpecs @ [chartSpec]
-                charts.Add((ChartMaker.chart chartSpec data).GetHtml())
+                let html = (ChartMaker.chart chartSpec currentData).GetHtml()
+                let headOffset = html.IndexOf("<head>")
+                let fixedHtml = html.Substring(0, headOffset) + "<head>" + compatibilityHeader + html.Substring(headOffset + 6)
+                charts.Add fixedHtml
+                File.WriteAllText(@"D:\Nemo\Test\chart17.html", fixedHtml)
                 this.RaisePropertyChanged <@@ this.Charts @@>
                 ())
+    do view.DataContext <- this
     member this.Filters
         with get() = filters
         and set v =
@@ -113,3 +126,4 @@ type ReportViewModel(view:ReportView, data) as this =
             this.RaisePropertyChanged <@@ this.SelectedChartType @@>
     member __.AddChart = addChart
     member __.Charts = charts
+    member __.View = view

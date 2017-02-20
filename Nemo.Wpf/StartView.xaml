@@ -1,7 +1,6 @@
 ﻿<UserControl
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Height="450" Width="500">
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     <StackPanel>
         <Button Command="{Binding OpenData}">Open Data.</Button>
     </StackPanel>

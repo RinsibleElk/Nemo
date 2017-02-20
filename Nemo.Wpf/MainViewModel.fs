@@ -6,15 +6,14 @@ open ViewModule.FSharp
 
 type MainView = XAML<"MainView.xaml">
 
-type MainViewModel(view:MainView) =
+type MainViewModel() as this =
     inherit ViewModelBase()
+    let view = MainView()
     let dataSet data =
-        let reportView = ReportView()
-        let reportViewModel = ReportViewModel(reportView, data)
-        reportView.DataContext <- reportViewModel
-        view.Content.Content <- reportView
-    let startView = StartView()
-    let startViewModel = StartViewModel(startView, dataSet)
+        let reportViewModel = ReportViewModel(data)
+        view.Content.Content <- reportViewModel.View
+    let startViewModel = StartViewModel(dataSet)
     do
-        startView.DataContext <- startViewModel
-        view.Content.Content <- startView
+        view.Content.Content <- startViewModel.View
+        view.DataContext <- this
+    member __.View = view

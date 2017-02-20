@@ -118,4 +118,13 @@ let write (file:FileInfo) (data:Data) =
     use stream = new FileStream(file.FullName, FileMode.Create, FileAccess.Write)
     use writer = new StreamWriter(stream)
     serializer.Serialize(writer, data, typeof<Data>)
-write (FileInfo @"D:\Nemo\Test\data.json") allData
+//write (FileInfo @"D:\Nemo\Test\data.json") allData
+
+let chart =
+    let data = match allData with | Grouped m -> m.["Buckets"] | _ -> failwith ""
+    let path = []
+    let config = BucketChart(CumValues, None)
+    let spec = { Path = path ; Config = config }
+    (ChartMaker.chart spec data).GetHtml()
+
+

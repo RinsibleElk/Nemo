@@ -12,7 +12,6 @@ type App = XAML<"App.xaml">
 [<STAThread>]
 [<EntryPoint>]
 let main(_) =
-    let mainView = MainView()
-    let mainViewModel = MainViewModel(mainView)
+    let mainViewModel = MainViewModel()
     let app = App()
-    app.Run(mainView)
+    app.Run(mainViewModel.View)
