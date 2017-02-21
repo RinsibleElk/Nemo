@@ -1,6 +1,7 @@
 ﻿#load "../packages/FsLab/FsLab.fsx"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\Nemo.dll"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\Nemo.Stats.dll"
+#r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\Nemo.Html.dll"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\MathNet.Numerics.dll"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\MathNet.Numerics.FSharp.dll"
 #r @"D:\Projects\Nemo\Nemo.Stats\bin\Debug\Newtonsoft.Json.dll"
@@ -11,6 +12,7 @@ open FsLab
 open XPlot.Plotly
 open Nemo
 open Nemo.Stats
+open Nemo.Html
 open MathNet.Numerics
 open MathNet.Numerics.Distributions
 open Newtonsoft.Json
@@ -69,62 +71,43 @@ let allData =
     ]
     |> Map.ofList
     |> Grouped
-let bucket ty = {Path=[];Config=BucketChart(ty,None)}
-let bucket2 nq ty = {Path=[];Config=BucketChart(ty,(Some {NumQuantiles = (Some nq)}))}
-let timed s ty = {Path=[All;Specific s];Config=TimedChart(ty,None)}
-let bucketf ty = {Path=[Specific "Buckets"];Config=BucketChart(ty,None)}
-let bucket2f nq ty = {Path=[Specific "Buckets"];Config=BucketChart(ty,(Some {NumQuantiles = (Some nq)}))}
-let timedf s ty = {Path=[Specific "Daily";All;Specific s];Config=TimedChart(ty,None)}
+let makeSpec path ty = { Path=path ; Config=(ty, None) }
+let makeSpec1 = makeSpec []
+let makeSpecCfg path n ty = {Path=path ; Config=(ty, (Some {NumQuantiles=(Some n)}))}
+let makeSpecCfg1 n ty = {Path=[] ; Config=(ty, (Some {NumQuantiles=(Some n)}))}
 let spec =
     Manual
         [
-            ("Separate",    [Specific "Buckets"],   FromData ([All], (Page [("Cdf", bucket Cdf);("Pdf", bucket Pdf)])))
+            ("Separate",    [Specific "Buckets"],   FromData ([All], (Page [("Cdf", makeSpec1 Cdf);("Pdf", makeSpec1 Pdf)])))
             ("Together",    [Specific "Buckets"],   (Page   [
-                                                                ("Cdf", bucket Cdf)
-                                                                ("Pdf", bucket Pdf)
-                                                                ("CumValues", bucket CumValues)
-                                                                ("PredResp", bucket PredResp)
-                                                                ("Cdf", bucket2 Ten Cdf)
-                                                                ("Pdf", bucket2 Ten Pdf)
-                                                                ("CumValues", bucket2 Ten CumValues)
-                                                                ("PredResp", bucket2 Ten PredResp)
+                                                                ("Cdf", makeSpec1 Cdf)
+                                                                ("Pdf", makeSpec1 Pdf)
+                                                                ("CumValues", makeSpec1 CumValues)
+                                                                ("PredResp", makeSpec1 PredResp)
+                                                                ("Cdf", makeSpecCfg1 Ten Cdf)
+                                                                ("Pdf", makeSpecCfg1 Ten Pdf)
+                                                                ("CumValues", makeSpecCfg1 Ten CumValues)
+                                                                ("PredResp", makeSpecCfg1 Ten PredResp)
                                                             ]))
             ("Daily",       [Specific "Daily"],     (Page   [
-                                                                ("Metric1", (timed "Metric1" TimedLine))
-                                                                ("Metric1 Cumulative", (timed "Metric1" CumulativeTimedLine))
-                                                                ("Metric2", (timed "Metric2" TimedLine))
-                                                                ("Metric2 Cumulative", (timed "Metric2" CumulativeTimedLine))
+                                                                ("Metric1", (makeSpec [All;Specific "Metric1"] Line))
+                                                                ("Metric1 Cumulative", (makeSpec [All;Specific "Metric1"] CumulativeLine))
+                                                                ("Metric2", (makeSpec [All;Specific "Metric2"] Line))
+                                                                ("Metric2 Cumulative", (makeSpec [All;Specific "Metric2"] CumulativeLine))
                                                             ]))
             ("OnePage",     [],                     (Page   [
-                                                                ("Cdf", bucketf Cdf)
-                                                                ("Pdf", bucketf Pdf)
-                                                                ("CumValues", bucketf CumValues)
-                                                                ("PredResp", bucketf PredResp)
-                                                                ("Cdf", bucket2f Ten Cdf)
-                                                                ("Pdf", bucket2f Ten Pdf)
-                                                                ("CumValues", bucket2f Ten CumValues)
-                                                                ("PredResp", bucket2f Ten PredResp)
-                                                                ("Metric1", (timedf "Metric1" TimedLine))
-                                                                ("Metric1 Cumulative", (timedf "Metric1" CumulativeTimedLine))
-                                                                ("Metric2", (timedf "Metric2" TimedLine))
-                                                                ("Metric2 Cumulative", (timedf "Metric2" CumulativeTimedLine))
+                                                                ("Cdf", makeSpec [Specific "Buckets"] Cdf)
+                                                                ("Pdf", makeSpec [Specific "Buckets"] Pdf)
+                                                                ("CumValues", makeSpec [Specific "Buckets"] CumValues)
+                                                                ("PredResp", makeSpec [Specific "Buckets"] PredResp)
+                                                                ("Cdf", makeSpecCfg [Specific "Buckets"] Ten Cdf)
+                                                                ("Pdf", makeSpecCfg [Specific "Buckets"] Ten Pdf)
+                                                                ("CumValues", makeSpecCfg [Specific "Buckets"] Ten CumValues)
+                                                                ("PredResp", makeSpecCfg [Specific "Buckets"] Ten PredResp)
+                                                                ("Metric1", (makeSpec [Specific "Daily";All;Specific "Metric1"] Line))
+                                                                ("Metric1 Cumulative", (makeSpec [Specific "Daily";All;Specific "Metric1"] CumulativeLine))
+                                                                ("Metric2", (makeSpec [Specific "Daily";All;Specific "Metric2"] Line))
+                                                                ("Metric2 Cumulative", (makeSpec [Specific "Daily";All;Specific "Metric2"] CumulativeLine))
                                                             ]))
         ]
-//Report.saveToFile "Report" (DirectoryInfo @"D:\Nemo\Test") "report.html" ({ Layout = spec }) (allData)
-
-let write (file:FileInfo) (data:Data) =
-    let serializer = JsonSerializer()
-    serializer.Formatting <- Formatting.Indented
-    use stream = new FileStream(file.FullName, FileMode.Create, FileAccess.Write)
-    use writer = new StreamWriter(stream)
-    serializer.Serialize(writer, data, typeof<Data>)
-//write (FileInfo @"D:\Nemo\Test\data.json") allData
-
-let chart =
-    let data = match allData with | Grouped m -> m.["Buckets"] | _ -> failwith ""
-    let path = []
-    let config = BucketChart(CumValues, None)
-    let spec = { Path = path ; Config = config }
-    (ChartMaker.chart spec data).GetHtml()
-
-
+File.WriteAllText(@"D:\Nemo\Test\report2.html", ReportWriter.makeReportHtml ChartType.Plotly "Report" {Layout=spec} allData)

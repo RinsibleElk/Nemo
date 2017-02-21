@@ -44,6 +44,9 @@
     <Reference Include="FSharp.Core, Version=$(TargetFSharpCoreVersion), Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
       <Private>True</Private>
     </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
@@ -54,6 +57,11 @@
     <None Include="Script.fsx" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nemo.Html\Nemo.Html.fsproj">
+      <Name>Nemo.Html</Name>
+      <Project>{c4af6251-b051-4cbd-8603-371cac5fb28b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Nemo\Nemo.fsproj">
       <Name>Nemo</Name>
       <Project>{6bafbd18-1ba9-4a5d-9f7e-3629a0cd069f}</Project>
