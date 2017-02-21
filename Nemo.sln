@@ -16,6 +16,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Nemo.Wpf", "Nemo.Wpf\Nemo.W
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Nemo.Infra", "Nemo.Infra\Nemo.Infra.csproj", "{6B3B7000-72BF-4FD4-8288-50074062EEC4}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "Nemo.Html", "Nemo.Html\Nemo.Html.fsproj", "{C4AF6251-B051-4CBD-8603-371CAC5FB28B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +58,14 @@ Global
 		{6B3B7000-72BF-4FD4-8288-50074062EEC4}.Release|Any CPU.Build.0 = Release|Any CPU
 		{6B3B7000-72BF-4FD4-8288-50074062EEC4}.Release|x86.ActiveCfg = Release|Any CPU
 		{6B3B7000-72BF-4FD4-8288-50074062EEC4}.Release|x86.Build.0 = Release|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Debug|x86.Build.0 = Debug|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Release|x86.ActiveCfg = Release|Any CPU
+		{C4AF6251-B051-4CBD-8603-371CAC5FB28B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

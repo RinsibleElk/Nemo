@@ -18,10 +18,10 @@
             <Button Margin="10,0,10,0" Command="{Binding RemoveFilters}">Remove Filters</Button>
         </StackPanel>
         <StackPanel DockPanel.Dock="Top" Orientation="Horizontal">
-            <ComboBox Margin="10,0,10,0" IsEditable="False" ItemsSource="{Binding SupportedChartTypes}" SelectedItem="{Binding SelectedChartType}">
+            <ComboBox Margin="10,0,10,0" IsEditable="False" ItemsSource="{Binding SupportedSeriesTypes}" SelectedItem="{Binding SelectedSeriesType}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
-                        <TextBlock Text="{Binding Converter={StaticResource ChartTypeToString}}" />
+                        <TextBlock Text="{Binding Converter={StaticResource SeriesTypeToString}}" />
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>

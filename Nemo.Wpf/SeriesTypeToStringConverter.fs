@@ -3,15 +3,15 @@
 open Nemo
 open System.Windows.Data
 
-[<ValueConversion(typeof<ChartType>, typeof<string>)>]
-type ChartTypeToStringConverter() =
+[<ValueConversion(typeof<SeriesType>, typeof<string>)>]
+type SeriesTypeToStringConverter() =
     interface IValueConverter
         with
             member __.Convert(value, targetType, _, _) =
                 if value |> isNull then failwith ""
                 try
-                    let chartType = unbox<ChartType> value
-                    (box (sprintf "%A" chartType))
+                    let seriesType = unbox<SeriesType> value
+                    (box (sprintf "%A" seriesType))
                 with e ->
                     "" |> box
             member __.ConvertBack(value, targetType, _, _) =

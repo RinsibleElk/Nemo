@@ -14,7 +14,7 @@
                 <!-- Converters -->
                 <ResourceDictionary>
                     <local:DataNodeToStringConverter x:Key="DataNodeToString" />
-                    <local:ChartTypeToStringConverter x:Key="ChartTypeToString" />
+                    <local:SeriesTypeToStringConverter x:Key="SeriesTypeToString" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

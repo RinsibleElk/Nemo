@@ -28,9 +28,9 @@ type Data =
     | SimpleData of (double * double) list
     | Invalid
     with
-        /// Is a chart type valid for this data?
-        member this.IsChartTypeValid(chartType) =
-            match (this, chartType) with
+        /// Is a series type valid for this data?
+        member this.IsSeriesTypeValid(seriesType) =
+            match (this, seriesType) with
             | (Invalid, _) -> false
             | (SimpleData _, Line)
             | (SimpleData _, CumulativeLine)
@@ -40,5 +40,5 @@ type Data =
             | (Buckets _, PredResp)
             | (Buckets _, Cdf)
             | (Buckets _, Pdf) -> true
-            | (Grouped m, _) -> (m |> Map.toList |> List.map (snd >> fun d -> d.IsChartTypeValid(chartType)) |> List.fold (fun o a -> if o |> Option.isNone then (Some a) else (Some (o.Value && a))) None) |> fun o -> o.IsSome && o.Value
+            | (Grouped m, _) -> (m |> Map.toList |> List.map (snd >> fun d -> d.IsSeriesTypeValid(seriesType)) |> List.fold (fun o a -> if o |> Option.isNone then (Some a) else (Some (o.Value && a))) None) |> fun o -> o.IsSome && o.Value
             | _ -> false

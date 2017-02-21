@@ -2,7 +2,6 @@
 
 open System
 open System.IO
-open XPlot.Plotly
 open FSharp.Data
 
 /// By restricting this using types, we get to have a slightly easier time of things.
@@ -12,8 +11,8 @@ type NumQuantiles =
     | Ten
     | OneHundred
 
-/// Not all are interesting for all chart types.
-type ChartOptions = {
+/// Not all are interesting for all series types.
+type SeriesOptions = {
     NumQuantiles : NumQuantiles option }
 
 [<RequireQualifiedAccess>]
@@ -50,22 +49,22 @@ module internal BucketChartPreparation =
         | Ten -> collapseFromExactMult 10 buckets
         | OneHundred -> collapseFromExactMult 100 buckets
 
-type ChartConfig = ChartType * ChartOptions option
+type SeriesConfig = SeriesType * SeriesOptions option
 
-type ChartSpec = {
+type SeriesSpec = {
     Path : DataPath
-    Config : ChartConfig }
+    Config : SeriesConfig }
 
 [<RequireQualifiedAccess>]
 module ChartMaker =
     /// Make a trace from some data.
-    let private makeSeries (chartType, chartOptions) name data : Trace option =
-        let numQuantiles = chartOptions |> Option.map (fun x -> x.NumQuantiles) |> defaultArg <| None
+    let private makeSeries (seriesType, seriesOptions) name data : Series option =
+        let numQuantiles = seriesOptions |> Option.map (fun x -> x.NumQuantiles) |> defaultArg <| None
         let n = match numQuantiles with | None -> 1000 | Some x -> match x with | Four -> 4 | Five -> 5 | Ten -> 10 | OneHundred -> 100
         let mapBuckets = numQuantiles |> Option.map BucketChartPreparation.collapse |> defaultArg <| id
         match data with
         | Buckets container ->
-            match chartType with
+            match seriesType with
             | CumValues ->
                 // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                 container.Buckets
@@ -75,13 +74,13 @@ module ChartMaker =
                 |> List.scan
                     (fun (x,y) bucket -> (x + bucket.Weight, y + bucket.Response))
                     (0.0, 0.0)
-                |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                |> fun data -> Some (Series.Scatter { Name=name ; X=(data |> List.map fst); Y=(data |> List.map snd) })
             | PredResp ->
                 container.Buckets
                 |> mapBuckets
                 |> List.ofArray
                 |> List.map (fun bucket -> (bucket.Sum / bucket.Weight, bucket.Response / bucket.Weight))
-                |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                |> fun data -> Some (Series.Scatter { Name=name ; X=(data |> List.map fst); Y = (data |> List.map snd) })
             | Cdf ->
                 // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                 let minValue = (container.Buckets.[0].Min, 0.0)
@@ -95,7 +94,7 @@ module ChartMaker =
                         (bucket.Median, (((float i) / fn) + m)))
                 |> List.ofArray
                 |> fun l -> (minValue::l)@[maxValue]
-                |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                |> fun data -> Some (Series.Scatter { Name=name ; X=(data |> List.map fst) ; Y = (data |> List.map snd) })
             | Pdf ->
                 // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                 let minValue = (container.Buckets.[0].Min, 0.0)
@@ -115,47 +114,46 @@ module ChartMaker =
                         ((x, g), (x, y)))
                     (minValue, minValue)
                 |> List.map fst
-                |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                |> fun data -> Some (Series.Scatter { Name=name ; X=(data |> List.map fst) ; Y = (data |> List.map snd) })
             | _ -> None
         | SimpleData(data) ->
-            match chartType with
-            | Line -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+            match seriesType with
+            | Line -> Some (Series.Scatter { Name=name ; X=(data |> List.map fst) ; Y=(data |> List.map snd) })
             | CumulativeLine ->
                 // We make use of the horrible List.scan behaviour where it inserts an extra element at the beginning.
                 data
                 |> List.scan
                     (fun (_,ty) (x,y) -> (x, ty + y))
                     (0.0, 0.0)
-                |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                |> fun data -> Some (Series.Scatter { Name=name ; X=(data |> List.map fst) ; Y = (data |> List.map snd) })
             | _ -> None
         | TimedData(data) ->
-            match chartType with
-            | Line -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+            match seriesType with
+            | Line -> Some (Series.TimeScatter { Name=name ; X=(data |> List.map fst) ; Y=(data |> List.map snd) })
             | CumulativeLine ->
                 data
                 |> List.scan
                     (fun (_,ty) (x,y) -> (x, ty + y))
                     (DateTime.MinValue, 0.0)
                 |> List.skip 1
-                |> fun data -> Some (Scatter(name=name, x=(data |> List.map fst), y = (data |> List.map snd)) :> Trace)
+                |> fun data -> Some (Series.TimeScatter { Name=name ; X=(data |> List.map fst) ; Y=(data |> List.map snd) })
             | _ -> None
         | _ -> None
 
     /// Make a chart from data.
-    let chart chartSpec data =
-        let data = data |> TraverseData.filterData chartSpec.Path |> TraverseData.collapseDivergences
+    let chart seriesSpec data : Nemo.Chart =
+        let data = data |> TraverseData.filterData seriesSpec.Path |> TraverseData.collapseDivergences
         match data with
         | Grouped m ->
             m
-            |> Map.map (fun key -> makeSeries chartSpec.Config key)
+            |> Map.map (fun key -> makeSeries seriesSpec.Config key)
             |> Map.filter (fun _ -> Option.isSome)
             |> Map.map (fun _ -> Option.get)
         | Invalid -> Map.empty
         | _ ->
-            match (makeSeries chartSpec.Config "Data" data) with
+            match (makeSeries seriesSpec.Config "Data" data) with
             | None -> Map.empty
-            | Some trace -> Map.ofList [("Data", trace)]
+            | Some series -> Map.ofList [("Data", series)]
         |> Map.toList
         |> List.map snd
-        |> Chart.Plot
 

@@ -11,6 +11,7 @@ open FsXaml
 open System
 open System.Collections.ObjectModel
 open FSharp.Data
+open Nemo.Html
 
 type ReportView = XAML<"ReportView.xaml">
 
@@ -24,6 +25,7 @@ type ReportViewModel(data) as this =
         <meta http-equiv=\"X-UA-Compatible\" content=\"IE=edge\" />
 "
     let mutable currentData = data
+    let chartType = ChartType.Plotly
     let f =
         match currentData with
         | Grouped m ->
@@ -34,8 +36,8 @@ type ReportViewModel(data) as this =
     let mutable filters = ObservableCollection<Choice<string,DataNode>>(f)
     let mutable currentFilters : DataPath = []
     let mutable selectedFilter = f |> List.head
-    let mutable supportedChartTypes = ObservableCollection<ChartType>(ChartTypes.AllChartTypes |> List.filter (fun chartType -> currentData.IsChartTypeValid(chartType)))
-    let mutable selectedChartType = ChartType.CumValues
+    let mutable supportedSeriesTypes = ObservableCollection<SeriesType>(SeriesTypes.AllSeriesTypes |> List.filter (fun seriesType -> currentData.IsSeriesTypeValid(seriesType)))
+    let mutable selectedSeriesType = SeriesType.CumValues
     let mutable addFilterCanExecute = true
     let addFilter =
         Command.syncChecked
@@ -54,7 +56,7 @@ type ReportViewModel(data) as this =
                                 else
                                     (All::(m |> Map.toList |> List.map (fst >> Specific))) |> List.map Choice2Of2
                              | _ -> [Choice1Of2 ""]
-                        this.SupportedChartTypes <- ObservableCollection<ChartType>(ChartTypes.AllChartTypes |> List.filter (fun chartType -> currentData.IsChartTypeValid(chartType)))
+                        this.SupportedSeriesTypes <- ObservableCollection<SeriesType>(SeriesTypes.AllSeriesTypes |> List.filter (fun seriesType -> currentData.IsSeriesTypeValid(seriesType)))
                         this.Filters <- ObservableCollection<Choice<string,DataNode>>(f)
                         this.SelectedFilter <- f |> List.head
                     | _ ->
@@ -73,7 +75,7 @@ type ReportViewModel(data) as this =
                         else
                             (All::(m |> Map.toList |> List.map (fst >> Specific))) |> List.map Choice2Of2
                      | _ -> [Choice1Of2 ""]
-                this.SupportedChartTypes <- ObservableCollection<ChartType>(ChartTypes.AllChartTypes |> List.filter (fun chartType -> currentData.IsChartTypeValid(chartType)))
+                this.SupportedSeriesTypes <- ObservableCollection<SeriesType>(SeriesTypes.AllSeriesTypes |> List.filter (fun seriesType -> currentData.IsSeriesTypeValid(seriesType)))
                 this.Filters <- ObservableCollection<Choice<string,DataNode>>(f)
                 currentFilters <- []
                 this.RaisePropertyChanged <@@ this.CurrentFilters @@>
@@ -82,7 +84,7 @@ type ReportViewModel(data) as this =
             (fun () -> removeFiltersCanExecute)
     let mutable chartSpecs = []
     let charts = ObservableCollection<string>()
-    let mutable addChartCanExecute = supportedChartTypes.Count > 0
+    let mutable addChartCanExecute = supportedSeriesTypes.Count > 0
     let addChart =
         Command.syncChecked
             (fun () ->
@@ -90,10 +92,10 @@ type ReportViewModel(data) as this =
                 removeFilters.RaiseCanExecuteChanged()
                 addFilterCanExecute <- false
                 addFilter.RaiseCanExecuteChanged()
-                let chartConfig = (selectedChartType, None)
+                let chartConfig = (selectedSeriesType, None)
                 let chartSpec = { Path = [] ; Config = chartConfig }
                 chartSpecs <- chartSpecs @ [chartSpec]
-                let html = (ChartMaker.chart chartSpec currentData).GetHtml()
+                let html = (ChartMaker.chart chartSpec currentData) |> ChartWriter.makeChartPageHtml chartType
                 let headOffset = html.IndexOf("<head>")
                 let fixedHtml = html.Substring(0, headOffset) + "<head>" + compatibilityHeader + html.Substring(headOffset + 6)
                 charts.Add fixedHtml
@@ -131,17 +133,17 @@ type ReportViewModel(data) as this =
             else currentFilters |> List.map (function | All -> "(All)" | Specific s -> s) |> List.fold (fun a b -> if a = "" then b else a + ";" + b) ""
     member __.AddFilter = addFilter
     member __.RemoveFilters = removeFilters
-    member this.SelectedChartType
-        with get() = selectedChartType
+    member this.SelectedSeriesType
+        with get() = selectedSeriesType
         and set v =
-            selectedChartType <- v
-            this.RaisePropertyChanged <@@ this.SelectedChartType @@>
-    member __.SupportedChartTypes
-        with get() = supportedChartTypes
+            selectedSeriesType <- v
+            this.RaisePropertyChanged <@@ this.SelectedSeriesType @@>
+    member __.SupportedSeriesTypes
+        with get() = supportedSeriesTypes
         and set v =
-            supportedChartTypes <- v
+            supportedSeriesTypes <- v
             setAddChartCanExecute (v.Count > 0)
-            this.RaisePropertyChanged <@@ this.SupportedChartTypes @@>
+            this.RaisePropertyChanged <@@ this.SupportedSeriesTypes @@>
     member __.AddChart = addChart
     member __.Charts = charts
     member __.View = view

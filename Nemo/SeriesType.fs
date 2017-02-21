@@ -1,6 +1,6 @@
 ﻿namespace Nemo
 
-type ChartType =
+type SeriesType =
     /// Cumulative Value vs Cumulative Weight in descending order.
     | CumValues
     /// Mean Y vs Median X in ascending order.

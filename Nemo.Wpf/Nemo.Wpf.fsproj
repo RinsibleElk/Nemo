@@ -49,8 +49,8 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
-    <Compile Include="ChartTypes.fs" />
-    <Compile Include="ChartTypeToStringConverter.fs" />
+    <Compile Include="SeriesTypes.fs" />
+    <Compile Include="SeriesTypeToStringConverter.fs" />
     <Compile Include="DataNodeToStringConverter.fs" />
     <Compile Include="DataBrowserModel.fs" />
     <Compile Include="DataBrowserViewModel.fs" />
@@ -72,6 +72,11 @@
     <Resource Include="nemo.ico" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Nemo.Html\Nemo.Html.fsproj">
+      <Name>Nemo.Html</Name>
+      <Project>{c4af6251-b051-4cbd-8603-371cac5fb28b}</Project>
+      <Private>True</Private>
+    </ProjectReference>
     <ProjectReference Include="..\Nemo.Infra\Nemo.Infra.csproj">
       <Name>Nemo.Infra</Name>
       <Project>{6b3b7000-72bf-4fd4-8288-50074062eec4}</Project>
