@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
+    <Compile Include="ChartType.fs" />
     <Compile Include="Data.fs" />
     <Compile Include="DataPath.fs" />
     <Compile Include="ChartMaker.fs" />

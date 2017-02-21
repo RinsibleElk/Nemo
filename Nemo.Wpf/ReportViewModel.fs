@@ -34,6 +34,7 @@ type ReportViewModel(data) as this =
     let mutable filters = ObservableCollection<Choice<string,DataNode>>(f)
     let mutable currentFilters : DataPath = []
     let mutable selectedFilter = f |> List.head
+    let mutable supportedChartTypes = ObservableCollection<ChartType>(ChartTypes.AllChartTypes |> List.filter (fun chartType -> currentData.IsChartTypeValid(chartType)))
     let mutable selectedChartType = ChartType.CumValues
     let mutable addFilterCanExecute = true
     let addFilter =
@@ -53,6 +54,7 @@ type ReportViewModel(data) as this =
                                 else
                                     (All::(m |> Map.toList |> List.map (fst >> Specific))) |> List.map Choice2Of2
                              | _ -> [Choice1Of2 ""]
+                        this.SupportedChartTypes <- ObservableCollection<ChartType>(ChartTypes.AllChartTypes |> List.filter (fun chartType -> currentData.IsChartTypeValid(chartType)))
                         this.Filters <- ObservableCollection<Choice<string,DataNode>>(f)
                         this.SelectedFilter <- f |> List.head
                     | _ ->
@@ -71,6 +73,7 @@ type ReportViewModel(data) as this =
                         else
                             (All::(m |> Map.toList |> List.map (fst >> Specific))) |> List.map Choice2Of2
                      | _ -> [Choice1Of2 ""]
+                this.SupportedChartTypes <- ObservableCollection<ChartType>(ChartTypes.AllChartTypes |> List.filter (fun chartType -> currentData.IsChartTypeValid(chartType)))
                 this.Filters <- ObservableCollection<Choice<string,DataNode>>(f)
                 currentFilters <- []
                 this.RaisePropertyChanged <@@ this.CurrentFilters @@>
@@ -79,19 +82,15 @@ type ReportViewModel(data) as this =
             (fun () -> removeFiltersCanExecute)
     let mutable chartSpecs = []
     let charts = ObservableCollection<string>()
+    let mutable addChartCanExecute = supportedChartTypes.Count > 0
     let addChart =
-        Command.sync
+        Command.syncChecked
             (fun () ->
                 removeFiltersCanExecute <- false
                 removeFilters.RaiseCanExecuteChanged()
                 addFilterCanExecute <- false
                 addFilter.RaiseCanExecuteChanged()
-                let chartConfig =
-                    match selectedChartType with
-                    | ChartType.CumValues -> ChartConfig.BucketChart(BucketChartType.CumValues, None)
-                    | ChartType.Line -> ChartConfig.SimpleChart(SimpleChartType.Line, None)
-                    | ChartType.TimedLine -> ChartConfig.TimedChart(TimedChartType.TimedLine, None)
-                    | _ -> failwithf "Unknown chart type %A" selectedChartType
+                let chartConfig = (selectedChartType, None)
                 let chartSpec = { Path = [] ; Config = chartConfig }
                 chartSpecs <- chartSpecs @ [chartSpec]
                 let html = (ChartMaker.chart chartSpec currentData).GetHtml()
@@ -100,6 +99,11 @@ type ReportViewModel(data) as this =
                 charts.Add fixedHtml
                 this.RaisePropertyChanged <@@ this.Charts @@>
                 ())
+            (fun () -> addChartCanExecute)
+    let setAddChartCanExecute f =
+        if addChartCanExecute <> f then
+            addChartCanExecute <- f
+            addChart.RaiseCanExecuteChanged()
     let dataBrowserViewModel =
         try
             DataBrowserViewModel(data)
@@ -132,6 +136,12 @@ type ReportViewModel(data) as this =
         and set v =
             selectedChartType <- v
             this.RaisePropertyChanged <@@ this.SelectedChartType @@>
+    member __.SupportedChartTypes
+        with get() = supportedChartTypes
+        and set v =
+            supportedChartTypes <- v
+            setAddChartCanExecute (v.Count > 0)
+            this.RaisePropertyChanged <@@ this.SupportedChartTypes @@>
     member __.AddChart = addChart
     member __.Charts = charts
     member __.View = view

@@ -14,17 +14,7 @@
                 <!-- Converters -->
                 <ResourceDictionary>
                     <local:DataNodeToStringConverter x:Key="DataNodeToString" />
-                </ResourceDictionary>
-                <!-- Enums -->
-                <ResourceDictionary>
-                    <ObjectDataProvider
-                        MethodName="GetValues"
-                        ObjectType="{x:Type local:ChartType}"
-                        x:Key="ChartTypeValues">
-                        <ObjectDataProvider.MethodParameters>
-                            <x:Type TypeName="local:ChartType" />
-                        </ObjectDataProvider.MethodParameters>
-                    </ObjectDataProvider>
+                    <local:ChartTypeToStringConverter x:Key="ChartTypeToString" />
                 </ResourceDictionary>
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

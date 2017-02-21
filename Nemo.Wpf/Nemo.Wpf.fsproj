@@ -49,8 +49,8 @@
   </Choose>
   <Import Project="$(FSharpTargetsPath)" Condition="Exists('$(FSharpTargetsPath)')" />
   <ItemGroup>
-    <Compile Include="ChartType.fs" />
-    <Compile Include="LevelToMarginConverter.fs" />
+    <Compile Include="ChartTypes.fs" />
+    <Compile Include="ChartTypeToStringConverter.fs" />
     <Compile Include="DataNodeToStringConverter.fs" />
     <Compile Include="DataBrowserModel.fs" />
     <Compile Include="DataBrowserViewModel.fs" />
