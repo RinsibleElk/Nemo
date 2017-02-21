@@ -34,6 +34,9 @@
     <DocumentationFile>bin\Release\Nemo.Stats.XML</DocumentationFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FSharp.Charting">
+      <HintPath>..\packages\FSharp.Charting\lib\net40\FSharp.Charting.dll</HintPath>
+    </Reference>
     <Reference Include="MathNet.Numerics">
       <HintPath>..\packages\MathNet.Numerics\lib\net40\MathNet.Numerics.dll</HintPath>
     </Reference>
@@ -50,12 +53,14 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Numerics" />
+    <Reference Include="XPlot.GoogleCharts">
+      <HintPath>..\packages\XPlot.GoogleCharts\lib\net45\XPlot.GoogleCharts.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.fs" />
     <Compile Include="Stats.fs" />
     <None Include="Script.fsx" />
-    <None Include="report2.html" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Nemo.Html\Nemo.Html.fsproj">

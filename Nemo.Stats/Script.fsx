@@ -110,7 +110,6 @@ let spec =
                                                                 ("Metric2 Cumulative", (makeSpec [Specific "Daily";All;Specific "Metric2"] CumulativeLine))
                                                             ]))
         ]
+
 File.WriteAllText(@"D:\Nemo\Test\report2.html", ReportWriter.makeReportHtml ChartType.Plotly "Report" {Layout=spec} allData)
-
-
 
