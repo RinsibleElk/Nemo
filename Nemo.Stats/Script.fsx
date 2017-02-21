@@ -111,3 +111,6 @@ let spec =
                                                             ]))
         ]
 File.WriteAllText(@"D:\Nemo\Test\report2.html", ReportWriter.makeReportHtml ChartType.Plotly "Report" {Layout=spec} allData)
+
+
+
